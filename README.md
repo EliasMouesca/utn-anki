@@ -56,6 +56,16 @@ Reglas:
 - `question`, `object` y `answer` se exportan como texto escapado HTML.
 - Los saltos de línea del CSV se preservan en la visualización de la carta.
 
+## Capturas
+
+Vista desktop:
+
+![Vista desktop](img/desktop.png)
+
+Vista mobile:
+
+![Vista mobile](img/mobile.jpg)
+
 ## Dependencia
 
 ```bash
