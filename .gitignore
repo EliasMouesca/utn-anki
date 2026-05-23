@@ -1,4 +1,5 @@
 __pycache__/
+**/__pycache__/
 *.py[cod]
 
 .pytest_cache/
@@ -8,6 +9,8 @@ __pycache__/
 venv/
 
 bkp/
-*.apkg
 
 .DS_Store
+
+*.csv
+*.apkg
