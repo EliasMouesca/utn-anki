@@ -9,10 +9,88 @@ from pathlib import Path
 import genanki
 
 
-ANKI_MODEL_ID = 1782140193
+ANKI_MODEL_ID = 80115514
 ANKI_DECK_ID = 2145730821
 MODEL_NAME = "UTN CSV QA"
 SUPPORTED_COLUMNS = {"title", "question", "object", "answer", "tags"}
+
+CARD_FRONT_TEMPLATE = """
+<div class="card-shell">
+  {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
+  <div class="question">{{Question}}</div>
+  {{#Object}}<div class="object">{{Object}}</div>{{/Object}}
+</div>
+"""
+
+CARD_BACK_TEMPLATE = """
+<div class="card-shell">
+  {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
+  <div class="question">{{Question}}</div>
+  {{#Object}}<div class="object">{{Object}}</div>{{/Object}}
+  <hr id="answer">
+  <div class="answer-label">Respuesta</div>
+  <div class="answer">{{Answer}}</div>
+</div>
+"""
+
+CARD_CSS = """
+.card {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: left;
+  color: #ffffff;
+  background: #172033;
+}
+.card-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 30px 34px;
+}
+.title {
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #9ca3af;
+}
+.question {
+  white-space: pre-wrap;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+}
+.object {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-left: 4px solid #475569;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  white-space: pre-wrap;
+  font-size: 22px;
+  line-height: 1.45;
+  color: #ffffff;
+}
+#answer {
+  margin: 26px 0 18px;
+  border: none;
+  border-top: 1px solid #334155;
+}
+.answer-label {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+.answer {
+  white-space: pre-wrap;
+  font-size: 25px;
+  line-height: 1.45;
+  color: #ffffff;
+}
+"""
 
 
 @dataclass(frozen=True)
@@ -45,54 +123,11 @@ def build_deck_from_csv(csv_path: Path, output_path: Path, deck_name: str) -> Pa
         templates=[
             {
                 "name": "Card 1",
-                "qfmt": """
-<div class="title">{{Title}}</div>
-<div class="question">{{Question}}</div>
-{{#Object}}<div class="object">{{Object}}</div>{{/Object}}
-""",
-                "afmt": """
-{{FrontSide}}
-<hr id="answer-separator">
-<div class="answer">{{Answer}}</div>
-""",
+                "qfmt": CARD_FRONT_TEMPLATE,
+                "afmt": CARD_BACK_TEMPLATE,
             }
         ],
-        css="""
-.card {
-  font-family: arial, sans-serif;
-  font-size: 20px;
-  text-align: left;
-  color: #111;
-  background-color: #fff;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #555;
-  margin-bottom: 12px;
-}
-
-.question,
-.object,
-.answer {
-  white-space: pre-wrap;
-}
-
-.question {
-  margin-bottom: 10px;
-}
-
-.object {
-  font-style: italic;
-  color: #444;
-  margin-top: 8px;
-}
-
-#answer-separator {
-  margin: 18px 0 14px;
-}
-""",
+        css=CARD_CSS,
     )
 
     deck = genanki.Deck(ANKI_DECK_ID, deck_name)

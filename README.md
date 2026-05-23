@@ -2,57 +2,62 @@
 
 Base genérica para construir mazos de Anki a partir de un CSV.
 
+Este proyecto fue hecho con ayuda de genAI.
+
 ## Estructura
 
-- `cards.csv`: ejemplo funcional con el formato correcto.
-- `cards_template.csv`: template vacío para arrancar otro mazo.
-- `Preguntas AG - Hoja 1.csv`: ejemplo real heredado de `AG_anki`.
-- `AGENTS.md`: conocimiento copiado de Administración Gerencial.
-- `src/utn_anki/csv_export.py`: lógica de exportación desde CSV.
-- `scripts/build_anki_deck_from_csv.py`: script principal de exportación.
-- `build_deck.py`: wrapper corto para reconstruir el mazo.
-- `resources/media/`: imágenes opcionales reutilizables.
+- `build_deck.py`: wrapper ejecutable principal.
+- `scripts/build_anki_deck_from_csv.py`: CLI real.
+- `src/utn_anki/csv_export.py`: lógica de lectura del CSV y generación del `.apkg`.
+- `template.csv`: formato mínimo de referencia para el CSV.
+- `AGENTS.md`: contrato funcional y decisiones de implementación del repo.
 
 ## Uso rápido
 
 ```bash
-python3 build_deck.py
+./build_deck.py preguntas.csv
+./build_deck.py preguntas.csv -n "Preguntas de una materia"
+./build_deck.py preguntas.csv --output salida/preguntas.apkg
 ```
 
-Por defecto toma `cards.csv` y genera `cards.apkg`.
+Si no se pasa `-n` o `--deck-name`, el nombre del mazo se deriva del nombre del archivo CSV.
 
-Si el `.apkg` ya existe, antes de regenerarlo se mueve a `bkp/` con timestamp.
+Si no se pasa `--output`, la salida es `<csv_stem>.apkg` en la raíz del proyecto.
 
-También podés pasar cualquier CSV con el mismo esquema:
-
-```bash
-python3 build_deck.py /ruta/cartas.csv
-python3 build_deck.py /ruta/cartas.csv --deck-name "Mi mazo"
-python3 build_deck.py /ruta/cartas.csv --output /ruta/mi_mazo.apkg
-```
+Si ese `.apkg` ya existe, antes de regenerarlo se mueve a `bkp/` con timestamp.
 
 ## Formato CSV
 
-Columnas mínimas:
+`template.csv` define el formato base:
 
-- `title`
-- `question`
-- `object`
-- `answer`
+```csv
+title,question,object,answer
+```
 
-Opcional:
+Columnas soportadas:
 
-- `tags`
+- `title`: opcional como texto visible y además se convierte en tag.
+- `question`: obligatoria.
+- `object`: opcional; funciona como contexto adicional.
+- `answer`: obligatoria.
+- `tags`: opcional aunque no figure en `template.csv`; acepta separadores `,` o `;`.
 
 Reglas:
 
-- `question` y `answer` son obligatorios.
-- `object` es opcional y se muestra como contexto adicional.
-- `tags` acepta valores separados por `,` o `;`.
-- El exportador no interpreta tipos especiales: simplemente muestra `question`, `object` y `answer` tal como estén escritos en el CSV.
+- El parser acepta encabezados con mayúsculas/minúsculas mezcladas.
+- Filas completamente vacías se ignoran.
+- Si falta `question` o `answer` en una fila no vacía, se lanza error.
+- Si no hay cartas utilizables, se lanza error.
+
+## Cartas generadas
+
+- Modelo Anki: `UTN CSV QA`
+- Campos: `Title`, `Question`, `Object`, `Answer`
+- `question`, `object` y `answer` se exportan como texto escapado HTML.
+- Los saltos de línea del CSV se preservan en la visualización de la carta.
 
 ## Dependencia
 
 ```bash
-python3 -m pip install genanki
+python3 -m pip install -r requirements.txt
 ```
